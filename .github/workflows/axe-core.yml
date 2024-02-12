@@ -39,7 +39,7 @@ jobs:
         if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
+          GITHUB_TOKEN: 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
           header: axe-core-comment
           recreate: true
           message: |
