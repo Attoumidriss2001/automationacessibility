@@ -1,0 +1,56 @@
+name: ♿️ A11Y CI with Axe Core
+
+on:
+  pull_request:
+    paths:
+      - '**/.github/workflows/axe-core.yml'
+  workflow_dispatch:
+    inputs:
+      website:
+        required: true
+        type: string
+        description: Website to audit
+
+env:
+  WEBSITE_TO_AUDIT: ${{ inputs.website || 'https://npmjs.com/' }}
+
+jobs:
+  Axe-CLI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Chrome Driver
+        uses: logikal-io/install-chrome@v1
+        with:
+          version: 114.0.5735.133-1
+
+      - name: Install Axe CLI
+        run: npm install -g @axe-core/cli
+        
+      - name: Run Axe CLI
+        id: axe
+        uses: mathiasvr/command-output@v1
+        with:
+          run: axe $WEBSITE_TO_AUDIT --chromedriver-path="/usr/local/bin/chromedriver" --exit --tags wcag2aa
+
+      - name: Comment pull request
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
+          header: axe-core-comment
+          recreate: true
+          message: |
+            ## ♿️ Axe report
+            Audited website : ${{ env.WEBSITE_TO_AUDIT }}
+            ```
+            ${{ steps.axe.outputs.stdout }}
+            ${{ steps.axe.outputs.stderr }}
+            ```
+            *This report has been generated using [@axe-core/cli](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/cli).*
+
+
+
+
