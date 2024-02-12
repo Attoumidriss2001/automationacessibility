@@ -14,7 +14,7 @@ on:
         description: Website to audit
 
 env:
-  WEBSITE_TO_AUDIT: ${{ inputs.website || 'https://amazon.fr/' }}
+  WEBSITE_TO_AUDIT: ${{ inputs.website || 'https://npmjs.com/' }}
 
 jobs:
   Lighthouse-CLI:
@@ -55,7 +55,7 @@ jobs:
         if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          GITHUB_TOKEN: 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
+          GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
           header: lighthouse-comment
           recreate: true
           message: ${{ steps.format_lighthouse_score.outputs.comment }}
